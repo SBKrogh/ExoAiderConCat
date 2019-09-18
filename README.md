@@ -1,2 +1,0 @@
-# ExoAiderConCat
-Development of code 
