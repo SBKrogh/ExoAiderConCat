@@ -19,24 +19,25 @@ class TaskBT2
         void SetTask(uint8_t ValueBT);
         bool RunTask();
         void ExecuteTask();
-        void printIMU();
         void BeginIMU();
-        std::vector<float> GetSensorData();
 
-        
-        
+        std::vector<float> GetSensorDataSerial();
+        std::vector<uint8_t> GetSensorDataBT();
 
     protected:
         
     private:
-        char int2char(int Value);
-        std::vector<float> _DataBuffer;
-        std::string _task, _str;
-        //std::vector<float> _IMUBuffer;
-        bool _run;
-        // float _IMUBuffer1[3], _IMUBuffer2[3]; 
-        
+        // uint8_t float2int();
+        void float2uint8(float FloatToBeConverted);
+        std::vector<uint8_t> _ReinterpretedValue = {0};
 
+        char int2char(int Value);
+        std::vector<uint8_t> _DataBufferBT;
+        std::vector<float> _DataBufferSerial;
+        uint8_t _ArrayBufferBT[];
+        
+        std::string _task, _str;
+        bool _run;
 };
 
 #endif
