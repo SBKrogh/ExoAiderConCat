@@ -37,12 +37,6 @@ void loop() {
     ESP_BT.write(DataBufferBT.data(), DataBufferBT.size()); // Send data over Bluetooth
     delay(1);
     
-    // std::vector<float> dummy = Task.GetSensorDataSerial();
-    // for (std::vector<int>::size_type i = 0; i < dummy.size(); i++) {
-	  //   std::cout << dummy.at(i) << endl;
-    // }
   }
-  
-
 }
 

@@ -38,6 +38,7 @@ class TaskBT2
         
         std::string _task, _str;
         bool _run;
+        uint32_t _package_counter = 0;
 };
 
 #endif

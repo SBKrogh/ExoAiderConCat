@@ -62,7 +62,6 @@ void TaskBT2::ExecuteTask(){
     
     // Sample IMU data only [IMU1x, IMU1y, IMU1z, IMU2x, IMU2y, IMU2z]
     if(_task.compare("IMU") == 0){ 
-        Serial.println("IMU Begin");
         
         _IMU1.readSensor(); // Read IMU 1 data 
         _IMU2.readSensor(); // Read IMU 2 data
@@ -82,7 +81,7 @@ void TaskBT2::ExecuteTask(){
         float2uint8(_IMU2.getAccelZ_mss());                                                                  // Reinterprets IMU data float to uint8_t data 
         _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
 
-
+        _package_counter = _package_counter + 1;
         return;
         }
     
@@ -93,7 +92,7 @@ void TaskBT2::ExecuteTask(){
     // Samples EMG, FSR and IMU data [EMG, FSR, IMU]
     if(_task.compare("All") == 0){return;}
     // Stops data collection 
-    if(_task.compare("Stop") == 0){_run = false; return;}
+    if(_task.compare("Stop") == 0){_run = false; Serial.println(_package_counter); _package_counter = 0; return;}
 
     cout << "The task did not exsist" << endl;
     _run = false;
