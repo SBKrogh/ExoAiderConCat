@@ -106,6 +106,7 @@ void TaskBT2::ExecuteTask(){
 std::vector<float> TaskBT2::GetSensorDataSerial(){
         _IMU1.readSensor(); // Read IMU 1 data 
         _IMU2.readSensor(); // Read IMU 2 data
+        _DataBufferSerial.erase(_DataBufferSerial.begin(),_DataBufferSerial.end());
         _DataBufferSerial.push_back(_IMU1.getAccelX_mss());           // Get IMU1 XYZ
         _DataBufferSerial.push_back(_IMU1.getAccelY_mss());
         _DataBufferSerial.push_back(_IMU1.getAccelZ_mss());
