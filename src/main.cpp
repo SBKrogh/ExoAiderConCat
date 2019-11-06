@@ -5,7 +5,6 @@
 BluetoothSerial ESP_BT; //Object for Bluetooth
 TaskBT2 Task(14, 32);   // pins for IMUs
 
-std::vector<float> DataBufferSerial;
 std::vector<uint8_t> DataBufferBT;
 
 void setup() {
@@ -15,7 +14,7 @@ void setup() {
   ESP_BT.begin("Exo-Aider ESP32"); //Name of Bluetooth Device
   Serial.println("Bluetooth Device is Ready to Pair");
 
-  pinMode (LED_BUILTIN, OUTPUT);//Specify that LED pin is output
+  pinMode (LED_BUILTIN, OUTPUT); //Specify that LED pin is output
 
   while(ESP_BT.hasClient() == false){digitalWrite(LED_BUILTIN, LOW);} // Wait until a connection is established
   Serial.println("Device Connected"); 
@@ -36,7 +35,6 @@ void loop() {
     DataBufferBT = Task.GetSensorDataBT(); // Get task/sensor data
     ESP_BT.write(DataBufferBT.data(), DataBufferBT.size()); // Send data over Bluetooth
     delay(1);
-    
   }
 }
 

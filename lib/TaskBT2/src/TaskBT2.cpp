@@ -89,7 +89,7 @@ void TaskBT2::ExecuteTask(){
     if(_task.compare("FSR") == 0){return;}
     // Sample EMG data only [EMG1, EMG2, EMG3, EMG4]
     if(_task.compare("EMG") == 0){return;}
-    // Samples EMG, FSR and IMU data [EMG, FSR, IMU]
+    // Samples EMG, FSR and IMU data [FSR, EMG, IMU]
     if(_task.compare("All") == 0){return;}
     // Stops data collection 
     if(_task.compare("Stop") == 0){_run = false; Serial.println(_package_counter); _package_counter = 0; return;}
