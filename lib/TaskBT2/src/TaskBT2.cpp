@@ -33,8 +33,8 @@ void TaskBT2::float2uint8(float FloatToBeConverted){
 
 /* Initialize the IMU */
 void TaskBT2::BeginIMU(){
-    _IMU1.begin(); // Initiate IMU 1
-    _IMU2.begin(); // Initiate IMU 2
+    Serial.println(_IMU1.begin()); // Initiate IMU 1
+    Serial.println(_IMU2.begin()); // Initiate IMU 2
 }
 
 /* Receive the task specified by the master */
@@ -67,7 +67,11 @@ void TaskBT2::ExecuteTask(){
         _IMU2.readSensor(); // Read IMU 2 data
         
         _DataBufferBT.erase(_DataBufferBT.begin(),_DataBufferBT.end()); // Clear Bluetooth buffer
-
+        
+        Serial.print(_IMU1.getAccelX_mss());
+        Serial.print("  ");
+        Serial.println(_IMU2.getAccelX_mss());
+        
         float2uint8(_IMU1.getAccelX_mss());
         _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
         float2uint8(_IMU1.getAccelY_mss());                                                                  // Reinterprets IMU data float to uint8_t data 

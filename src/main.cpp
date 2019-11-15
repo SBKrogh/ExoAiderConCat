@@ -3,14 +3,17 @@
 #include "TaskBT2.h"
 
 BluetoothSerial ESP_BT; //Object for Bluetooth
-TaskBT2 Task(14, 32);   // pins for IMUs
+TaskBT2 Task(15, 33);   // pins for IMUs
 
 std::vector<uint8_t> DataBufferBT;
 
-void setup() {
-  Task.BeginIMU();    // Initiate IMU 
+void setup() { 
   Serial.begin(9600); //Start Serial monitor in 9600
-  
+  Serial.println(" ");
+  Serial.println(" ");
+  Task.BeginIMU();    // Initiate IMU
+
+
   ESP_BT.begin("Exo-Aider ESP32"); //Name of Bluetooth Device
   Serial.println("Bluetooth Device is Ready to Pair");
 
