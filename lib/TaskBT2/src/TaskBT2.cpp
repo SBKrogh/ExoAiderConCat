@@ -31,10 +31,21 @@ void TaskBT2::float2uint8(float FloatToBeConverted){
             ////////// Public //////////
 //////////////////////////////////////////////////////////
 
-/* Initialize the IMU */
+/* Initialize the IMUs */
 void TaskBT2::BeginIMU(){
+    Serial.println("Initialize IMU");
     Serial.println(_IMU1.begin()); // Initiate IMU 1
     Serial.println(_IMU2.begin()); // Initiate IMU 2
+}
+
+/* Initialize DACs */
+void TaskBT2::BeginDAC(){
+    Serial.println("Initialize DAC");
+    Serial.println(_DAC.begin_Daisy());
+}
+
+void TaskBT2::SetDACVoltaget(uint8_t Channel, float Voltage){
+    _DAC.SetVoltage_Daisy(Channel, Voltage);
 }
 
 /* Receive the task specified by the master */
