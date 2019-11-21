@@ -27,14 +27,14 @@ void setup() {
   pinMode (LED_BUILTIN, OUTPUT); //Specify that LED pin is output
 
   // Example: set DAC voltage channel [0 - 7] - input: [Channel, Voltage]
-  Task.SetDACVoltaget(0,0); 
-  Task.SetDACVoltaget(1,1); 
-  Task.SetDACVoltaget(2,2);
-  Task.SetDACVoltaget(3,3);
-  Task.SetDACVoltaget(4,4);
-  Task.SetDACVoltaget(5,5);
-  Task.SetDACVoltaget(6,4);
-  Task.SetDACVoltaget(7,3);
+  Task.SetDACVoltaget(0, 2.5); 
+  Task.SetDACVoltaget(1, 2.5); 
+  Task.SetDACVoltaget(2, 2.5);
+  Task.SetDACVoltaget(3, 2.5);
+  Task.SetDACVoltaget(4, 2.5);
+  Task.SetDACVoltaget(5, 2.5);
+  Task.SetDACVoltaget(6, 2.5);
+  Task.SetDACVoltaget(7, 2.5);
 
   while(ESP_BT.hasClient() == false){digitalWrite(LED_BUILTIN, LOW);} // Wait until a connection is established
   Serial.println("Device Connected"); 
