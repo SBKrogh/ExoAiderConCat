@@ -167,7 +167,7 @@ void TaskBT2::ExecuteTask(){
         }
 
     // Stops data collection 
-    if(_task.compare("Stop") == 0){_run = false; Serial.println(_package_counter); _package_counter = 0; return;}
+    if(_task.compare("Stop") == 0){_run = false; return;}
 
     cout << "The task did not exsist" << endl;
     _run = false;
