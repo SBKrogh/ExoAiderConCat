@@ -588,8 +588,12 @@ void ADS8688::cmdRegisterDaisy(uint8_t reg)
 {
     byte MSB;
     byte LSB;
+    uint16_t SPI_Data;
     _ADC_Buffer_FSR.erase(_ADC_Buffer_FSR.begin(),_ADC_Buffer_FSR.end());    // Empty the ADC FSR buffer
     _ADC_Buffer_EMG.erase(_ADC_Buffer_EMG.begin(),_ADC_Buffer_EMG.end());    // Empty the ADC EMG buffer
+
+    
+
 
     for (size_t i = 0; i < _ChannelNmb; i++)
     {
@@ -610,10 +614,14 @@ void ADS8688::cmdRegisterDaisy(uint8_t reg)
                  _ADC_Buffer_EMG.push_back(I2V((MSB << 8) | LSB ,_GlobalRange)); // Only four channels of the EMG ADC are used 
             }
             
+            
             MSB = SPI.transfer(0x00);
             LSB = SPI.transfer(0x00);
-            _ADC_Buffer_FSR.push_back(I2V((MSB << 8) | LSB ,_GlobalRange));
-            
+            SPI_Data = (MSB << 8) | LSB; 
+            _ADC_Buffer_FSR.push_back(I2V(SPI_Data, _GlobalRange));
+            //_ADC_Buffer_FSR.push_back(2.47);
+            // Serial.println(_ADC_Buffer_FSR[i]);
+
         }
         digitalWrite(_cs, HIGH);
         SPI.endTransaction();
@@ -662,4 +670,11 @@ std::vector<float> ADS8688::ReturnADC_FSR(){
 
 std::vector<float> ADS8688::ReturnADC_EMG(){
     return _ADC_Buffer_EMG;
+}
+
+
+void ADS8688::Begin(){
+  setChannelSPD(0b11111111);       // bitwise channel selection 
+  setGlobalRange(R0);              // set range for all channels to +- 10 V
+  autoRst();                       // reset auto sequence
 }

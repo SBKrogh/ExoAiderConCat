@@ -2,7 +2,6 @@
 #include "TaskBT2.h"
 #include <iostream>
 #include <vector>
-//#include <IMU_Setup.h>
 
 //////////////////////////////////////////////////////////
             ////////// Private //////////
@@ -16,20 +15,25 @@ char TaskBT2::int2char(int Value){
     return *ch;
 }
 
-/* reinterprets IMU float to four byte uint8_t for BT communication */
+/* reinterprets float to four byte uint8_t for BT communication */
 void TaskBT2::float2uint8(float FloatToBeConverted){
-    uint8_t *_array;  
-    _array = reinterpret_cast<uint8_t*>(&FloatToBeConverted);
-    _ReinterpretedValue.erase(_ReinterpretedValue.begin(),_ReinterpretedValue.end());
-    for (size_t i = 0; i < 4; i++)
-    {
-        _ReinterpretedValue.push_back(_array[i]);
+    uint8_t *_array;                                                                  // uint8_t pointer
+    _array = reinterpret_cast<uint8_t*>(&FloatToBeConverted);                         // reinterpret float to four uint8_t 
+    _ReinterpretedValue.erase(_ReinterpretedValue.begin(),_ReinterpretedValue.end()); // Erase reinterpret buffer
+    for (size_t i = 0; i < 4; i++){
+        _ReinterpretedValue.push_back(_array[i]);                                     // store reinterpreted data   
     }
 }
 
 //////////////////////////////////////////////////////////
             ////////// Public //////////
 //////////////////////////////////////////////////////////
+
+/* Initialixe the ADCs*/
+void TaskBT2::BeginADC(){
+    Serial.println("Initialize ADC");
+    _ADC.Begin();
+}
 
 /* Initialize the IMUs */
 void TaskBT2::BeginIMU(){
@@ -79,10 +83,6 @@ void TaskBT2::ExecuteTask(){
         
         _DataBufferBT.erase(_DataBufferBT.begin(),_DataBufferBT.end()); // Clear Bluetooth buffer
         
-        Serial.print(_IMU1.getAccelX_mss());
-        Serial.print("  ");
-        Serial.println(_IMU2.getAccelX_mss());
-        
         float2uint8(_IMU1.getAccelX_mss());
         _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
         float2uint8(_IMU1.getAccelY_mss());                                                                  // Reinterprets IMU data float to uint8_t data 
@@ -96,26 +96,83 @@ void TaskBT2::ExecuteTask(){
         float2uint8(_IMU2.getAccelZ_mss());                                                                  // Reinterprets IMU data float to uint8_t data 
         _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
 
-        _package_counter = _package_counter + 1;
         return;
         }
     
     // Sample FSR data only [FSR1, FSR2, FSR3, FSR4, FSR5, FSR6, FSR7, FSR8]
-    if(_task.compare("FSR") == 0){return;}
+    if(_task.compare("FSR") == 0){
+        _ADC.noOpDaisy();                                               // Sample ADC channels
+        _DataBufferBT.erase(_DataBufferBT.begin(),_DataBufferBT.end()); // Clear Bluetooth buffer
+        std::vector<float> FSR = _ADC.ReturnADC_FSR();                  // Get FSR data
+       
+        for (size_t i = 0; i < FSR.size(); i++)
+        {   
+            float2uint8(FSR[i]);                                                                                 // Reinterprets IMU data float to uint8_t data 
+             _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());  // Store reinterpreted data in Bluetooth buffer
+        }
+        return;
+        }
+
     // Sample EMG data only [EMG1, EMG2, EMG3, EMG4]
-    if(_task.compare("EMG") == 0){return;}
+    if(_task.compare("EMG") == 0){
+        _ADC.noOpDaisy();                                               // Sample ADC channels
+        _DataBufferBT.erase(_DataBufferBT.begin(),_DataBufferBT.end()); // Clear Bluetooth buffer
+        std::vector<float> EMG = _ADC.ReturnADC_EMG();                  // Get EMG data
+       
+        for (size_t i = 0; i < EMG.size(); i++)
+        {   
+            float2uint8(EMG[i]);                                                                                 // Reinterprets IMU data float to uint8_t data 
+             _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());  // Store reinterpreted data in Bluetooth buffer
+        }
+        return;
+        }
+
     // Samples EMG, FSR and IMU data [FSR, EMG, IMU]
-    if(_task.compare("All") == 0){return;}
+    if(_task.compare("All") == 0){
+
+        _DataBufferBT.erase(_DataBufferBT.begin(),_DataBufferBT.end()); // Clear Bluetooth buffer
+        _ADC.noOpDaisy();                                               // Sample ADC channels
+        _IMU1.readSensor();                                             // Read IMU 1 data 
+        _IMU2.readSensor();                                             // Read IMU 2 data
+
+        /*FSR*/
+        std::vector<float> FSR = _ADC.ReturnADC_FSR();                  // Get FSR data
+        for (size_t i = 0; i < FSR.size(); i++){   
+            float2uint8(FSR[i]);                                                                                 // Reinterprets IMU data float to uint8_t data 
+             _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());  // Store reinterpreted data in Bluetooth buffer
+        }
+
+        /*EMG*/
+        std::vector<float> EMG = _ADC.ReturnADC_EMG();                  // Get EMG data
+        for (size_t i = 0; i < EMG.size(); i++){   
+            float2uint8(EMG[i]);                                                                                 // Reinterprets IMU data float to uint8_t data 
+             _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());  // Store reinterpreted data in Bluetooth buffer
+        }
+
+        /*IMU*/
+        float2uint8(_IMU1.getAccelX_mss());
+        _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
+        float2uint8(_IMU1.getAccelY_mss());                                                                  // Reinterprets IMU data float to uint8_t data 
+        _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
+        float2uint8(_IMU1.getAccelZ_mss());                                                                  // Reinterprets IMU data float to uint8_t data 
+        _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
+        float2uint8(_IMU2.getAccelX_mss());                                                                  // Reinterprets IMU data float to uint8_t data 
+        _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
+        float2uint8(_IMU2.getAccelY_mss());                                                                  // Reinterprets IMU data float to uint8_t data 
+        _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
+        float2uint8(_IMU2.getAccelZ_mss());                                                                  // Reinterprets IMU data float to uint8_t data 
+        _DataBufferBT.insert(_DataBufferBT.end(), _ReinterpretedValue.begin(), _ReinterpretedValue.end());   // Store reinterpreted data in Bluetooth buffer
+
+        return;
+        }
+
     // Stops data collection 
     if(_task.compare("Stop") == 0){_run = false; Serial.println(_package_counter); _package_counter = 0; return;}
 
     cout << "The task did not exsist" << endl;
     _run = false;
-    
     return;
 }
-
-
 
 /* Return DataBuffer if Serial communication is used */
 std::vector<float> TaskBT2::GetSensorDataSerial(){
@@ -131,8 +188,12 @@ std::vector<float> TaskBT2::GetSensorDataSerial(){
     return _DataBufferSerial;
 }
 
-
+/* Return data for BT communication */
 std::vector<uint8_t> TaskBT2::GetSensorDataBT(){
     return _DataBufferBT;
 }
 
+/* Set task for testing on MPU side */ 
+void TaskBT2::setTask(){
+    _task = "All";
+}
