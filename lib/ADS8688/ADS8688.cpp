@@ -686,5 +686,5 @@ void ADS8688::Begin(){
   } else {
       Serial.println(-1);
   }
-  
+  autoRst();   
 }
