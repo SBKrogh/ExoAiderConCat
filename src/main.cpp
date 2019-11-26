@@ -44,7 +44,6 @@ void setup() {
   Serial.println("Device Connected"); 
   // Task.setTask(); // Debugging erase this for
 
-  timer = micros();
 }
 
 

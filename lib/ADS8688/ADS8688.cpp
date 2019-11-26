@@ -477,6 +477,10 @@ uint8_t ADS8688::readRegister(uint8_t reg)
     digitalWrite(_cs, LOW);
     SPI.transfer((reg << 1) | 0x00);
     SPI.transfer(0x00);
+
+    SPI.endTransaction();
+    SPI.beginTransaction(SPISettings(_sclk, MSBFIRST, SPI_MODE0));
+
     byte result = SPI.transfer(0x00);
     digitalWrite(_cs, HIGH);
     SPI.endTransaction();
@@ -677,4 +681,10 @@ void ADS8688::Begin(){
   setChannelSPD(0b11111111);       // bitwise channel selection 
   setGlobalRange(R0);              // set range for all channels to +- 10 V
   autoRst();                       // reset auto sequence
+  if(getCommandReadBack() == AUTO_RST){
+      Serial.println(1);
+  } else {
+      Serial.println(-1);
+  }
+  
 }

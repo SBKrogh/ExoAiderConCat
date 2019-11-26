@@ -31,13 +31,6 @@ int MAX525::begin_Daisy()
     _spi->begin();
     delay(50);
     for (size_t i = 0; i < 8; i++){SetVoltage_Daisy(i,0); delay(10);} // set all channels to zero 
-    
-    // _spi->beginTransaction(SPISettings(_SCLK, MSBFIRST, SPI_MODE0)); // begin the transaction
-    // digitalWrite(_csPin, LOW);
-    // _spi->transfer16(Update_All_DAC_Reg);
-    // _spi->transfer16(Update_All_DAC_Reg);
-    // digitalWrite(_csPin, HIGH);
-    // _spi->endTransaction();    
     return 1;
 }
 
