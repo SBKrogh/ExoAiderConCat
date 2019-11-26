@@ -13,7 +13,6 @@ TaskBT2 Task(CS_IMU1, CS_IMU2, CS_DAC, CS_ADC);   // pins for IMUs
 std::vector<uint8_t> DataBufferBT;
 
 float SetVoltage = 0;
-unsigned long timer;
 
 void setup() { 
 
@@ -23,7 +22,7 @@ void setup() {
   Serial.println("");
 
   Task.BeginIMU();     // Initiate IMU
-  Task.BeginDAC();     // Initiate DAC
+  Task.BeginDAC();     // Initiate DAC - Default output is set to zero volt
   Task.BeginADC();     // Initiate ADC
   
   // Example: set DAC voltage channel [0 - 7] - input: [Channel, Voltage] 
@@ -62,14 +61,6 @@ void loop() {
     DataBufferBT = Task.GetSensorDataBT();                  // Get task/sensor data
     ESP_BT.write(DataBufferBT.data(), DataBufferBT.size()); // Send data over Bluetooth
     delay(1);
-    
   }
-
-  if(timer + 1000000 < micros()){
-  SetVoltage = SetVoltage + 1;
-  if(SetVoltage == 5){SetVoltage = 0;}
-  Task.SetDACVoltaget(0, SetVoltage);
-  } 
-
 }
 
