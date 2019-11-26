@@ -42,7 +42,6 @@ void setup() {
   
   Serial.println("Device Connected"); 
   // Task.setTask(); // Debugging erase this for
-
 }
 
 
@@ -55,7 +54,7 @@ void loop() {
   {
     Task.SetTask(ESP_BT.read());                            // Check task to execute
   }
-
+  
   if (Task.RunTask()){                                      // Check if task exsists         
     Task.ExecuteTask();                                     // Execute task 
     DataBufferBT = Task.GetSensorDataBT();                  // Get task/sensor data
