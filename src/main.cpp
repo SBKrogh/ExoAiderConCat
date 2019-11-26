@@ -70,8 +70,6 @@ void loop() {
   SetVoltage = SetVoltage + 1;
   if(SetVoltage == 5){SetVoltage = 0;}
   Task.SetDACVoltaget(0, SetVoltage);
-  timer = micros();
-  Serial.println(timer);
   } 
 
 }

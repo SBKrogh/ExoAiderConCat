@@ -23,15 +23,16 @@ class TaskBT2
             ,_DAC(SPI,CS_DAC)
             ,_ADC(CS_ADC){} 
         
-        void SetTask(uint8_t ValueBT);
-        bool RunTask();
-        void ExecuteTask();
         void BeginIMU();
         void BeginDAC();
         void BeginADC();
-        void SetDACVoltaget(uint8_t Channel, float Voltage);
 
+        void SetTask(uint8_t ValueBT);
+        bool RunTask();
+        void ExecuteTask();
         void setTask();
+
+        void SetDACVoltaget(uint8_t Channel, float Voltage);
 
         std::vector<float> GetSensorDataSerial();
         std::vector<uint8_t> GetSensorDataBT();
@@ -39,18 +40,19 @@ class TaskBT2
     protected:
         
     private:
-        // uint8_t float2int();
         void float2uint8(float FloatToBeConverted);
-        std::vector<uint8_t> _ReinterpretedValue = {0};
-
         char int2char(int Value);
+
+        std::vector<uint8_t> _ReinterpretedValue = {0};
         std::vector<uint8_t> _DataBufferBT;
         std::vector<float> _DataBufferSerial;
+        
         uint8_t _ArrayBufferBT[];
         
         std::string _task, _str;
-        bool _run;
         uint32_t _package_counter = 0;
+
+        bool _run;
 };
 
 #endif
