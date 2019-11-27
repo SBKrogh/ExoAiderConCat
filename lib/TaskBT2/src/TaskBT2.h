@@ -30,7 +30,7 @@ class TaskBT2
         void SetTask(uint8_t ValueBT);
         bool RunTask();
         void ExecuteTask();
-        void setTask();
+        void TestTask();
 
         void SetDACVoltaget(uint8_t Channel, float Voltage);
 

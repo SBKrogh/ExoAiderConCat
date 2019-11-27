@@ -194,7 +194,7 @@ std::vector<uint8_t> TaskBT2::GetSensorDataBT(){
 }
 
 /* Set task for testing on MPU side */ 
-void TaskBT2::setTask(){
+void TaskBT2::TestTask(){
     _task = "All";
     // _task = "IMU";
     // _task = "EMG";

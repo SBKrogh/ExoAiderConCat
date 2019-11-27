@@ -12,7 +12,7 @@ BluetoothSerial ESP_BT; //Object for Bluetooth
 TaskBT2 Task(CS_IMU1, CS_IMU2, CS_DAC, CS_ADC);   // pins for IMUs
 std::vector<uint8_t> DataBufferBT;
 
-float SetVoltage = 0;
+float SetVoltage = 0.5;
 
 void setup() { 
 
@@ -41,7 +41,7 @@ void setup() {
   while(ESP_BT.hasClient() == false){digitalWrite(LED_BUILTIN, LOW);} // Wait until a connection is established
   
   Serial.println("Device Connected"); 
-  // Task.setTask(); // Debugging erase this for
+  // Task.TestTask(); // Debugging erase this for
 }
 
 
