@@ -113,6 +113,9 @@ void TaskBT2::ExecuteTask(){
         return;
         }
 
+
+    
+
     // Sample EMG data only [EMG1, EMG2, EMG3, EMG4]
     if(_task.compare("EMG") == 0){
         _ADC.noOpDaisy();                                               // Sample ADC channels
@@ -168,6 +171,40 @@ void TaskBT2::ExecuteTask(){
 
     // Stops data collection 
     if(_task.compare("Stop") == 0){_run = false; return;}
+
+    /* Calibrate DAC channels for maximum contraction/flexion - FSR
+       Use this command when doing a maximum contraction. The gain will
+       be adjustet such the FSR output is amplified as much as possible.*/
+    if(_task.compare("CalibrateFSR") == 0){
+
+        std::vector<float> FSR;                                                     // FSR buffer reading
+        std::vector<float> MeanFSR;                                                 // FSR mean value 
+        std::vector<float> Resistance_FSR;                                          // FSR resistance 
+        std::vector<float> CalibratedVoltageDAC;                                    // Calibrated voltage for DAC output
+        float VoltageOutDAC = 9;                                                    // Maximum voltage when flexing with additional buffer of 1 V   
+
+        for (size_t i = 0; i < 8; i++){_DAC.SetVoltage_Daisy(i, 0.5); MeanFSR.push_back(0); delay(10);}   // Set all DAC channels to 0.5 V and initialize MeanFSR as a zero vector
+        
+        for (size_t i = 0; i < 500; i++){
+            _ADC.noOpDaisy();                                        // Sample ADC channels
+            FSR = _ADC.ReturnADC_FSR();                              // Get FSR data
+
+            for (size_t k = 0; k < 8; k++){MeanFSR[k] = FSR[k] + MeanFSR[k];}
+            delay(1);
+        }
+
+        for (size_t i = 0; i < 8; i++){MeanFSR[i] = MeanFSR[i]/500;}   // Calculate mean - division done here due to numerical issues
+
+        for (size_t i = 0; i < 8; i++){
+            Resistance_FSR.push_back( (50000)/(MeanFSR[i]-0.5) );  // Derived from non-inverting feedback law  Vo/Vin = 1 + R2/R1, where R2 = 100k, Vo = FSR[i], Vin ~ 0.5 V
+            CalibratedVoltageDAC.push_back( (VoltageOutDAC * Resistance_FSR[i])/(Resistance_FSR[i] + 100000) );  // Find input voltage to DAC Vin = Vo*R1/R1+R2
+        }
+
+        for (size_t i = 0; i < 8; i++){_DAC.SetVoltage_Daisy(i, CalibratedVoltageDAC[i]); delay(10);}    // Set all DAC to calibrate value
+        
+        _task = "Stop";
+        return;
+    }
 
     cout << "The task did not exsist" << endl;
     _run = false;

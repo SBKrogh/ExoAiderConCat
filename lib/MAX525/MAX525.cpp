@@ -82,6 +82,9 @@ int MAX525::SetVoltage(uint8_t DAC_x, float Voltage)
     order. Henceforth, the actual DAC channel, e.g [1,2,3,4], do not match with the PCB pin header [1,2,3,4]*/
 int MAX525::SetVoltage_Daisy(int DAC_x, float Voltage)
 {   
+    if(5 < Voltage){Voltage = 5;}
+    if(Voltage< 0 ){Voltage = 0;}
+
     _spi->beginTransaction(SPISettings(_SCLK, MSBFIRST, SPI_MODE0)); // begin the transaction
     digitalWrite(_csPin, LOW);
 
