@@ -623,9 +623,6 @@ void ADS8688::cmdRegisterDaisy(uint8_t reg)
             LSB = SPI.transfer(0x00);
             SPI_Data = (MSB << 8) | LSB; 
             _ADC_Buffer_FSR.push_back(I2V(SPI_Data, _GlobalRange));
-            //_ADC_Buffer_FSR.push_back(2.47);
-            // Serial.println(_ADC_Buffer_FSR[i]);
-
         }
         digitalWrite(_cs, HIGH);
         SPI.endTransaction();

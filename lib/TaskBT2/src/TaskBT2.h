@@ -14,10 +14,10 @@ using namespace std;
 class TaskBT2
 {
     public:
-        ADS8688 _ADC;
-        MAX525 _DAC;
         MPU9250FIFO _IMU1, _IMU2;
-        
+        MAX525 _DAC;
+        ADS8688 _ADC;
+                
         TaskBT2(uint8_t CS_IMU1, uint8_t CS_IMU2, uint8_t CS_DAC, uint8_t CS_ADC)
             :_IMU1(SPI, CS_IMU1), _IMU2(SPI, CS_IMU2)   // Constructors and member initializer lists
             ,_DAC(SPI,CS_DAC)
