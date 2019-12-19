@@ -589,25 +589,24 @@ This only works for a two Daisy chain configuration. For dynamic Daisy chain con
 adjustment to cmdRegisterDaisy is needed! 
 */
 void ADS8688::cmdRegisterDaisy(uint8_t reg)
-{
+{   
+    unsigned long dummy;
     byte MSB;
     byte LSB;
     uint16_t SPI_Data;
     _ADC_Buffer_FSR.erase(_ADC_Buffer_FSR.begin(),_ADC_Buffer_FSR.end());    // Empty the ADC FSR buffer
     _ADC_Buffer_EMG.erase(_ADC_Buffer_EMG.begin(),_ADC_Buffer_EMG.end());    // Empty the ADC EMG buffer
 
+    dummy = micros();
+    SPI.beginTransaction(SPISettings(_sclk, MSBFIRST, SPI_MODE0));           //
     
-
-
     for (size_t i = 0; i < _ChannelNmb; i++)
     {
-        SPI.beginTransaction(SPISettings(_sclk, MSBFIRST, SPI_MODE1));
+        
         digitalWrite(_cs, LOW);
         SPI.transfer(reg);
         SPI.transfer(0x00);
-        SPI.endTransaction();
-
-        SPI.beginTransaction(SPISettings(_sclk, MSBFIRST, SPI_MODE0)); // Necessary for ESP32
+        
         if (_mode > 4)
         {
 
@@ -617,16 +616,19 @@ void ADS8688::cmdRegisterDaisy(uint8_t reg)
             {
                  _ADC_Buffer_EMG.push_back(I2V((MSB << 8) | LSB ,_GlobalRange)); // Only four channels of the EMG ADC are used 
             }
-            
-            
+             
             MSB = SPI.transfer(0x00);
             LSB = SPI.transfer(0x00);
             SPI_Data = (MSB << 8) | LSB; 
             _ADC_Buffer_FSR.push_back(I2V(SPI_Data, _GlobalRange));
         }
+        
+        
         digitalWrite(_cs, HIGH);
-        SPI.endTransaction();
     }
+
+    SPI.endTransaction();
+
     // when exit power down it takes 15 ms to be operationnal
     if (_mode == MODE_POWER_DN)
         delay(15);
@@ -663,6 +665,7 @@ void ADS8688::cmdRegisterDaisy(uint8_t reg)
         _mode = MODE_MANUAL;
         break;
     }
+    Serial.println(micros() - dummy);
 }
 
 std::vector<float> ADS8688::ReturnADC_FSR(){

@@ -12,7 +12,7 @@ BluetoothSerial ESP_BT; //Object for Bluetooth
 TaskBT2 Task(CS_IMU1, CS_IMU2, CS_DAC, CS_ADC);   // pins for IMUs
 std::vector<uint8_t> DataBufferBT;
 
-float SetVoltage = 0.5;
+float SetVoltage = 0;
 
 void setup() { 
 
